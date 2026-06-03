@@ -1,0 +1,9 @@
+{
+    "server": {
+      "port": 12345,
+      "crypto_key": "12345678901234567890123456789012"
+    },
+    "database": {
+        "dsn": "kosmos:@tcp(127.0.0.1:3306)/kosmos_db?parseTime=true&loc=Local"
+    }
+  }
