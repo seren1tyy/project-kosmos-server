@@ -35,18 +35,18 @@ func Load(path string) Config {
 	// Читаем файл, если есть
 	if data, err := os.ReadFile(path); err == nil {
 		if err := json.Unmarshal(data, &cfg); err != nil {
-			log.Fatalf("❌ Failed to parse config.json: %v", err)
+			log.Fatalf("Failed to parse config.json: %v", err)
 		}
 	} else {
-		log.Printf("⚠️ %s not found, using defaults", path)
+		log.Printf("%s not found, using defaults", path)
 	}
 
 	// Валидация
 	if cfg.Server.Port < 1 || cfg.Server.Port > 65535 {
-		log.Fatalf("❌ Invalid server port: %d", cfg.Server.Port)
+		log.Fatalf("Invalid server port: %d", cfg.Server.Port)
 	}
 	if len(cfg.Server.CryptoKey) != 32 {
-		log.Fatalf("❌ Crypto key must be exactly 32 chars. Got: %d", len(cfg.Server.CryptoKey))
+		log.Fatalf("Crypto key must be exactly 32 chars. Got: %d", len(cfg.Server.CryptoKey))
 	}
 
 	return cfg

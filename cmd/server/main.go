@@ -17,22 +17,22 @@ import (
 )
 
 func main() {
-	// 🔹 Загрузка конфига
+	// Загрузка конфига
 	cfg := config.Load("config.json")
-	log.Printf("📦 Config loaded (port: %d)", cfg.Server.Port)
+	log.Printf("Config loaded (port: %d)", cfg.Server.Port)
 
-	// 🔹 Подключение к БД
+	// Подключение к БД
 	database := db.NewMariaDB()
 	if err := database.Connect(cfg.Database.DSN); err != nil {
-		log.Fatalf("🚫 DB connect failed: %v", err)
+		log.Fatalf("DB connect failed: %v", err)
 	}
 	defer database.Close()
-	log.Printf("📦 MariaDB pool initialized")
+	log.Printf("MariaDB pool initialized")
 
-	// ✅ Получаем *sql.DB из интерфейса
+	// Получаем *sql.DB из интерфейса
 	dbConn := database.(*db.MariaDB).GetDB()
 
-	// ✅ Создаём сервисы
+	// Создаём сервисы
 	itemSvc := items.NewService(dbConn)
 	universeSvc := universe.NewService(dbConn)
 	charSvc := character.NewService(dbConn, []byte(cfg.Server.CryptoKey), itemSvc, universeSvc)
@@ -43,14 +43,14 @@ func main() {
 		SessionMgr: session.NewManager(),
 	}
 
-	// 🔹 Запуск TCP-сервера
+	// Запуск TCP-сервера
 	addr := fmt.Sprintf(":%d", cfg.Server.Port)
 	ln, err := net.Listen("tcp", addr)
 	if err != nil {
-		log.Fatalf("🚫 Failed to listen on %s: %v", addr, err)
+		log.Fatalf("Failed to listen on %s: %v", addr, err)
 	}
 	defer ln.Close()
-	log.Printf("🟢 Server listening on %s", addr)
+	log.Printf("Server listening on %s", addr)
 
 	// 🔹 Основной цикл (без сложного graceful shutdown для дев-среды)
 	// На Windows ln.Close() + Ctrl+C корректно убивает процесс через ОС
@@ -62,7 +62,7 @@ func main() {
 			}
 			continue
 		}
-		// ✅ Передаём оба сервиса
+		// Передаём оба сервиса
 		go network.HandleClient(conn, authSvc, charSvc)
 	}
 }

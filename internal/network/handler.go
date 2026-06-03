@@ -7,11 +7,10 @@ import (
 	"net"
 
 	"project-kosmos-server/internal/auth"
-	"project-kosmos-server/internal/character" // 👈 Новый импорт
+	"project-kosmos-server/internal/character"
 	"project-kosmos-server/internal/protocol"
 )
 
-// Добавь передачу character.Service в HandleClient (обновим main.go ниже)
 func HandleClient(conn net.Conn, authSvc *auth.Service, charSvc *character.Service) {
 	defer conn.Close()
 	if tcp, ok := conn.(*net.TCPConn); ok {
@@ -23,7 +22,7 @@ func HandleClient(conn net.Conn, authSvc *auth.Service, charSvc *character.Servi
 		msg, err := protocol.ReadPacket(conn)
 		if err != nil {
 			if err != io.EOF {
-				log.Printf("📉 Read: %v", err)
+				log.Printf("Read: %v", err)
 			}
 			return
 		}
@@ -42,7 +41,7 @@ func HandleClient(conn net.Conn, authSvc *auth.Service, charSvc *character.Servi
 
 		case "create_character":
 			tokenStr, _ := req["token"].(string)
-			log.Printf("🔀 Routing to Create: token_prefix=%s", tokenStr[:min(len(tokenStr), 8)]+"...")
+			log.Printf("Routing to Create: token_prefix=%s", tokenStr[:min(len(tokenStr), 8)]+"...")
 
 			if authSvc.SessionMgr == nil {
 				protocol.SendPacket(conn, map[string]interface{}{"type": "create_result", "success": false, "message": "session_mgr_nil"})
@@ -50,12 +49,12 @@ func HandleClient(conn net.Conn, authSvc *auth.Service, charSvc *character.Servi
 			}
 			sess, ok := authSvc.SessionMgr.GetByToken(tokenStr)
 			if !ok || sess == nil {
-				log.Printf("❌ Create failed: invalid session (token=%s)", tokenStr)
+				log.Printf("Create failed: invalid session (token=%s)", tokenStr)
 				protocol.SendPacket(conn, map[string]interface{}{"type": "create_result", "success": false, "message": "invalid_session"})
 				break
 			}
 
-			log.Printf("✅ Session valid (AccountID: %d). Calling HandleCreate.", sess.UserID)
+			log.Printf("Session valid (AccountID: %d). Calling HandleCreate.", sess.UserID)
 			charSvc.HandleCreate(conn, sess.UserID, req)
 
 		case "fetch_characters":
@@ -101,7 +100,7 @@ func HandleClient(conn net.Conn, authSvc *auth.Service, charSvc *character.Servi
 			charSvc.HandleGetLocation(conn, int(charID))
 
 		default:
-			log.Printf("⚠️ Unknown packet type: %v", req["type"])
+			log.Printf("Unknown packet type: %v", req["type"])
 			protocol.SendPacket(conn, map[string]interface{}{"type": "error", "message": "unknown"})
 		}
 	}

@@ -44,7 +44,7 @@ func (m *Manager) CreateSession(userID int, conn net.Conn) (string, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	// ✅ КИКАЕМ СТАРУЮ СЕССИЮ С ПРЕДУПРЕЖДЕНИЕМ
+	// КИКАЕМ СТАРУЮ СЕССИЮ С ПРЕДУПРЕЖДЕНИЕМ
 	if old, exists := m.byUser[userID]; exists && old.Active {
 		old.Active = false
 		protocol.SendPacket(old.Conn, map[string]interface{}{
