@@ -1,5 +1,5 @@
 # project-kosmos-server
-Server-side for https://github.com/seren1tyy/projectkosmos
+Server-side for https://github.com/seren1tyy/project-kosmos
 
 ## HOW TO USE
 
