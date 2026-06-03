@@ -28,3 +28,4 @@ Server-side for https://github.com/seren1tyy/projectkosmos
 * Market
 * Simple corporation system
 * Simple character card (server-side)
+* Chat (via XMPP)
